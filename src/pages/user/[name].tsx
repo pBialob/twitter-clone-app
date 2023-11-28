@@ -31,16 +31,14 @@ const UserTweets: NextPage = () => {
   );
 
   return (
-    <HeaderLayout>
-      <div className="mx-auto min-h-[calc(100vh_-_var(--navigation-height))] w-full max-w-fit bg-white  px-12 pt-[var(--navigation-height)]">
-        <div className="flex flex-col">
-          {isLoading && <div>Loading...</div>}
-          <div className="mt-40 flex justify-center">
-            {tweets?.length === 0 && <h1 className="text-4xl">Brak tweetów</h1>}
-          </div>
+    <div className="mx-auto min-h-[calc(100vh_-_var(--navigation-height))] w-full max-w-fit bg-white  px-12 pt-[var(--navigation-height)]">
+      <div className="flex flex-col">
+        {isLoading && <div>Loading...</div>}
+        <div className="mt-40 flex justify-center">
+          {tweets?.length === 0 && <h1 className="text-4xl">Brak tweetów</h1>}
         </div>
       </div>
-    </HeaderLayout>
+    </div>
   );
 };
 

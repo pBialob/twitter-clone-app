@@ -38,5 +38,6 @@ main()
     process.exit(1);
   })
   .finally(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     await prisma.$disconnect();
   });

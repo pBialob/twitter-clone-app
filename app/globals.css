@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --navigation-height: 4rem;
+  }
+  html {
+    @apply h-full bg-white font-sans text-black;
+  }
+  body {
+    min-height: 100vh;
+  }
+}

@@ -23,6 +23,18 @@ const config = {
         port: "",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "png.pngtree.com",
+        port: "",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "png.pngtree.com",
+        port: "",
+        pathname: "**",
+      },
     ],
   },
   reactStrictMode: true,
