@@ -15,6 +15,7 @@ import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import HeaderLayout from "~/layouts/Header";
+import { AddTweetForm } from "~/components/AddTweetForm";
 
 const getTweets = async () => {
   try {
@@ -41,6 +42,7 @@ const Home: NextPage = () => {
     <SessionProvider>
       <main>
         <div className="mx-auto min-h-[calc(100vh_-_var(--navigation-height))] w-full max-w-fit bg-white  px-12 pt-[var(--navigation-height)]">
+          <AddTweetForm />
           <div className="grid grid-cols-12 flex-col  gap-10 divide-y">
             {isLoading && <div>Loading...</div>}
             {isSuccess &&
@@ -56,7 +58,7 @@ const Home: NextPage = () => {
                 >
                   <article className="flex flex-col gap-2 p-4 shadow-lg">
                     <div className="p-2">{tweet.content}</div>
-                    <Link href={`/restaurant/${tweet.id}`}>
+                    <Link href={`/tweet/${tweet.id}`}>
                       <span className="font-bold">Sprawdź tweeta</span>
                     </Link>
                   </article>
