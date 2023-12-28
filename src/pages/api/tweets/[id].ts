@@ -18,6 +18,7 @@ export default async function handler(
       where: { id: req.query.id as string },
       include: {
         hashtags: true,
+        media: true,
       },
     });
     res.status(200).json(tweet);

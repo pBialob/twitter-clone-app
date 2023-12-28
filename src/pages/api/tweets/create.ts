@@ -1,6 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { prisma } from "~/server/db";
-import { type Hashtag, type Tweet } from "@prisma/client";
+import { type Hashtag, Media, type Tweet } from "@prisma/client";
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,10 +8,10 @@ export default async function handler(
 ) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
-  const { authorId, content, hashtags } = JSON.parse(
+  const { authorId, content, hashtags, media } = JSON.parse(
     req.body as string
-  ) as Tweet & { hashtags: Hashtag[] };
-  console.log("Hashtags: ", hashtags);
+  ) as Tweet & { hashtags: Hashtag[]; media: Media[] };
+
   try {
     const newTweet: Tweet = await prisma.tweet.create({
       data: {
@@ -22,6 +22,9 @@ export default async function handler(
             where: { name },
             create: { name },
           })),
+        },
+        media: {
+          create: media,
         },
       },
     });
