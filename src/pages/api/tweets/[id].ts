@@ -16,6 +16,10 @@ export default async function handler(
   try {
     const tweet = await prisma.tweet.findFirstOrThrow({
       where: { id: req.query.id as string },
+      include: {
+        hashtags: true,
+        media: true,
+      },
     });
     res.status(200).json(tweet);
     return tweet as Tweet | null;

@@ -4,7 +4,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
-import { User, Tweet } from "@prisma/client";
+import {
+  type User,
+  type Tweet,
+  type Hashtag,
+  type Media,
+} from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
@@ -17,6 +22,8 @@ const getTweet = async (id: string) => {
   const tweet = await response.json();
   return tweet as Tweet & {
     user: User;
+    hashtags: Hashtag[];
+    media: Media[];
   };
 };
 
@@ -39,6 +46,16 @@ const Tweet: NextPage = () => {
         {tweet && (
           <>
             <div>?{tweet?.content}</div>
+            {tweet?.hashtags.map((hashtag) => (
+              <p key={hashtag.id}>
+                {hashtag.name} {hashtag.id}
+              </p>
+            ))}
+            {tweet?.media.map((media) => (
+              <div key={media.id}>
+                <img alt={media.url} src={media.url} />
+              </div>
+            ))}
           </>
         )}
       </div>
