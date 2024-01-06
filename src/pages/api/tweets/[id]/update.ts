@@ -6,14 +6,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "POST")
+  if (req.method !== "PUT") {
     return res.status(405).json({ error: "Method not allowed" });
-  const { authorId, content, hashtags, title, media } = JSON.parse(
-    req.body as string
-  ) as Tweet & { hashtags: Hashtag[]; media: Media[] };
-
+  }
   try {
-    const newTweet: Tweet = await prisma.tweet.create({
+    const { authorId, content, hashtags, title, media } = JSON.parse(
+      req.body as string
+    ) as Tweet & { hashtags: Hashtag[]; media: Media[] };
+
+    const updatedTweet: Tweet = await prisma.tweet.update({
+      where: { id: req.query.id as string },
       data: {
         authorId,
         content,
@@ -28,12 +30,18 @@ export default async function handler(
           create: media,
         },
       },
+      include: {
+        hashtags: true,
+        media: true,
+      },
     });
-    res.status(200).json(newTweet);
+
+    res.status(200).json(updatedTweet);
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    // Send a more detailed error message
     res.status(500).json({
-      error: "An error occurred while creating tweet.",
+      error: "An error occurred while updating tweet.",
     });
   }
 }

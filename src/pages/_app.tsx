@@ -15,11 +15,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <HeaderLayout>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <HeaderLayout>
           <Component {...pageProps} />
-        </QueryClientProvider>
-      </HeaderLayout>
+        </HeaderLayout>
+      </QueryClientProvider>
     </SessionProvider>
   );
 };

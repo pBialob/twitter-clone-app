@@ -87,9 +87,10 @@ model Tweet {
     id              String      @id @default(cuid())
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
+    title           String
     content         String
     authorId        String
-    author          User        @relation(fields: [authorId], references: [id])
+    author          User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
     likes           Like[]
     retweets        Retweet[]
     comments        Comment[]
@@ -101,18 +102,18 @@ model Retweet {
     id              String      @id @default(cuid())
     createdAt       DateTime    @default(now())
     tweetId         String
-    tweet           Tweet       @relation(fields: [tweetId], references: [id])
+    tweet           Tweet       @relation(fields: [tweetId], references: [id], onDelete: Cascade)
     userId          String
-    user            User        @relation(fields: [userId], references: [id])
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Like {
     id              String      @id @default(cuid())
     createdAt       DateTime    @default(now())
     tweetId         String
-    tweet           Tweet       @relation(fields: [tweetId], references: [id])
+    tweet           Tweet       @relation(fields: [tweetId], references: [id], onDelete: Cascade)
     userId          String
-    user            User        @relation(fields: [userId], references: [id])
+    user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
@@ -120,9 +121,9 @@ model Comment {
     createdAt       DateTime    @default(now())
     content         String
     tweetId         String
-    tweet           Tweet       @relation(fields: [tweetId], references: [id])
+    tweet           Tweet       @relation(fields: [tweetId], references: [id], onDelete: Cascade)
     authorId        String
-    author          User        @relation(fields: [authorId], references: [id])
+    author          User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
 
 model Follow {
@@ -130,8 +131,8 @@ model Follow {
     createdAt   DateTime @default(now())
     followingId String   
     followerId  String   
-    following   User     @relation("UserFollows", fields: [followingId], references: [id])
-    follower    User     @relation("UserFollowers", fields: [followerId], references: [id])
+    following   User     @relation("UserFollows", fields: [followingId], references: [id], onDelete:    Cascade)
+    follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
 }
 
 model Hashtag {
@@ -146,7 +147,7 @@ model Media {
     createdAt       DateTime    @default(now())
     url             String
     tweetId         String
-    tweet           Tweet       @relation(fields: [tweetId], references: [id])
+    tweet           Tweet       @relation(fields: [tweetId], references: [id], onDelete: Cascade)
 }
 
 model Message {
@@ -155,6 +156,6 @@ model Message {
     content      String
     senderId     String   
     recipientId  String  
-    sender       User     @relation("MessagesSent", fields: [senderId], references: [id])
-    recipient    User     @relation("MessagesReceived", fields: [recipientId], references: [id])
+    sender       User     @relation("MessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
+    recipient    User     @relation("MessagesReceived", fields: [recipientId], references: [id], onDelete: Cascade)
 }
