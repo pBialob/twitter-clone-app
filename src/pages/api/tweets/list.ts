@@ -19,6 +19,7 @@ export default async function handler(
         media: true,
         likes: true,
       },
+      orderBy: { createdAt: "desc" },
     });
     res.status(200).json(tweets);
   } catch (error) {
