@@ -7,7 +7,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Hashtag, Media, Tweet, User } from "@prisma/client";
+import { Hashtag, Like, Media, Tweet, User } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import { type NextPage } from "next";
@@ -26,7 +26,12 @@ const getTweets = async () => {
     }
     const data = await res.json();
     return data as Array<
-      Tweet & { author: User; hashtags: Array<Hashtag>; media: Array<Media> }
+      Tweet & {
+        author: User;
+        hashtags: Array<Hashtag>;
+        media: Array<Media>;
+        likes: Array<Like>;
+      }
     >;
   } catch (error) {
     console.error("Fetch failed:", error);

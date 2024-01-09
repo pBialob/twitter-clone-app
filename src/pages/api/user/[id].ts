@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { Tweet, User } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
 
@@ -12,18 +14,12 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
 
   try {
-    const tweets = await prisma.tweet.findMany({
-      include: {
-        author: true,
-        hashtags: true,
-        media: true,
-        likes: true,
-      },
+    const user = await prisma.user.findFirstOrThrow({
+      where: { id: req.query.id as string },
     });
-    res.status(200).json(tweets);
+    res.status(200).json(user);
+    return user as User | null;
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching restaurants." });
+    res.status(500).json({ error: "An error occurred while fetching user." });
   }
 }

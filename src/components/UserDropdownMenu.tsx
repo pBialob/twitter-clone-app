@@ -12,6 +12,7 @@ import {
 import { User, Settings, LogOut } from "lucide-react";
 import { type Session } from "next-auth";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 export const UserDropdownMenu = ({ session }: { session: Session | null }) => {
   return (
@@ -27,14 +28,12 @@ export const UserDropdownMenu = ({ session }: { session: Session | null }) => {
         <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profil</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Ustawienia</span>
-          </DropdownMenuItem>
+          <Link href={`/user/settings`}>
+            <DropdownMenuItem>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Ustawienia</span>
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={async () => await signOut()}>

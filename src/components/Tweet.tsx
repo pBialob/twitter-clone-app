@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Hashtag, Media, Tweet, User } from "@prisma/client";
+import { Hashtag, Like, Media, Tweet, User } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
 import { formatTimeToNow } from "lib/utils";
@@ -28,10 +28,24 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { useRef } from "react";
 import { AddTweetForm } from "./AddTweetForm";
+import { HeartFilledIcon, HeartIcon } from "@radix-ui/react-icons";
+import { toast } from "sonner";
 
 const deleteTweet = async (id: string) =>
   await fetch(`/api/tweets/${id}/delete`, {
     method: "DELETE",
+  });
+
+const likeTweet = async (id: string, userId: string) =>
+  await fetch(`/api/tweets/${id}/like`, {
+    method: "POST",
+    body: JSON.stringify({ userId }),
+  });
+
+const unlikeTweet = async (id: string, userId: string) =>
+  await fetch(`/api/tweets/${id}/unlike`, {
+    method: "POST",
+    body: JSON.stringify({ userId }),
   });
 
 const TweetComponent = ({
@@ -41,6 +55,7 @@ const TweetComponent = ({
     author: User;
     hashtags: Array<Hashtag>;
     media: Array<Media>;
+    likes: Array<Like>;
   };
 }) => {
   const queryClient = useQueryClient();
@@ -53,6 +68,32 @@ const TweetComponent = ({
       console.log(error);
     },
   });
+
+  const likeTweetMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const isLiked = tweet.likes.some(
+        (like) => like.userId === sessionData?.user?.id
+      );
+      if (sessionData?.user?.id === undefined) return;
+      return isLiked
+        ? unlikeTweet(id, sessionData.user.id)
+        : likeTweet(id, sessionData.user.id);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(["tweets"]);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const handleLikeClick = async () => {
+    if (sessionData?.user) {
+      await likeTweetMutation.mutateAsync(tweet.id);
+    } else {
+      toast.error("Musisz być zalogowany, aby polubić post.");
+    }
+  };
 
   const pRef = useRef<HTMLParagraphElement>(null);
   const { data: sessionData } = useSession();
@@ -68,6 +109,14 @@ const TweetComponent = ({
         <div className="flex w-full flex-col flex-wrap justify-between px-6 py-4">
           {/* Hashtags and User Info */}
           <div className="mt-1 flex flex-wrap items-center gap-1 text-xs text-gray-500">
+            <Button size="icon" variant="ghost" onClick={handleLikeClick}>
+              {tweet.likes.some((x) => x.userId === sessionData?.user?.id) ? (
+                <HeartFilledIcon className="h-4 w-4  fill-red-500" />
+              ) : (
+                <HeartIcon className="h-4 w-4 fill-black" />
+              )}
+              <span>{tweet.likes?.length}</span>
+            </Button>
             {sessionData?.user?.id === tweet.authorId && (
               <>
                 <Button

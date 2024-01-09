@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import HeaderLayout from "~/layouts/Header";
 import "../../app/globals.css";
+import { Toaster } from "sonner";
 
 const queryClient = new QueryClient();
 
@@ -17,7 +18,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
         <HeaderLayout>
-          <Component {...pageProps} />
+          <>
+            <Component {...pageProps} />
+            <Toaster />
+          </>
         </HeaderLayout>
       </QueryClientProvider>
     </SessionProvider>
