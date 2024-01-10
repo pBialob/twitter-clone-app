@@ -71,8 +71,12 @@ export const CommentsSection = ({ tweet }: { tweet: Tweet }) => {
     },
   });
 
-  const handleLoadMore = () => {
+  const handleExpand = () => {
     setCount(count + 3);
+  };
+
+  const handleCollapse = () => {
+    setCount(3);
   };
 
   return (
@@ -137,12 +141,24 @@ export const CommentsSection = ({ tweet }: { tweet: Tweet }) => {
             {comments.total > count && (
               <div className={"flex w-full justify-center"}>
                 <Button
-                  onClick={handleLoadMore}
+                  onClick={handleExpand}
                   className={
                     "w-fit self-center bg-white text-gray-900 shadow-sm hover:bg-gray-100"
                   }
                 >
                   Więcej
+                </Button>
+              </div>
+            )}
+            {comments.total <= count && (
+              <div className={"flex w-full justify-center"}>
+                <Button
+                  onClick={handleCollapse}
+                  className={
+                    "w-fit self-center bg-white text-gray-900 shadow-sm hover:bg-gray-100"
+                  }
+                >
+                  Zwiń
                 </Button>
               </div>
             )}
