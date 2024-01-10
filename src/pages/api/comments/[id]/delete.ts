@@ -1,6 +1,6 @@
+/* eslint-disable  @typescript-eslint/no-unsafe-assignment */
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { prisma } from "~/server/db";
-import { type Hashtag, Media, type Tweet } from "@prisma/client";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,32 +10,20 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
   }
   try {
-    // Delete comments
-    await prisma.comment.deleteMany({
-      where: { tweetId: req.query.id as string },
-    });
-
-    //delete likes
-    await prisma.like.deleteMany({
-      where: { tweetId: req.query.id as string },
-    });
-
     // Perform the delete operation
-    await prisma.tweet.delete({
+    console.log(req.query.id);
+    await prisma.comment.delete({
       where: { id: req.query.id as string },
-      include: {
-        hashtags: true,
-        media: true,
-      },
     });
     res.status(200).send({
-      message: "Tweet deleted successfully",
+      message: "Comment deleted successfully",
     });
   } catch (error) {
     console.error(error);
     // Send a more detailed error message
     res.status(500).json({
-      error: "An error occurred while deleting the tweet.",
+      error: "An error occurred while deleting the comment.",
+
       details: error.message || error,
     });
   }
