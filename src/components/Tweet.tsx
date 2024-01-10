@@ -15,11 +15,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Hashtag, Like, Media, Tweet, User } from "@prisma/client";
+import { Hashtag, Like, Media, Retweet, Tweet, User } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
 import { formatTimeToNow } from "lib/utils";
-import { MessageSquare, PencilIcon, TrashIcon } from "lucide-react";
+import { MessageSquare, PencilIcon, Repeat2, TrashIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React from "react";
 import { useRef } from "react";
@@ -45,6 +45,12 @@ const unlikeTweet = async (id: string, userId: string) =>
     body: JSON.stringify({ userId }),
   });
 
+const retweet = async (id: string, userId: string) =>
+  await fetch(`/api/tweets/${id}/retweet`, {
+    method: "POST",
+    body: JSON.stringify({ userId }),
+  });
+
 const TweetComponent = ({
   tweet,
 }: {
@@ -53,6 +59,7 @@ const TweetComponent = ({
     hashtags: Array<Hashtag>;
     media: Array<Media>;
     likes: Array<Like>;
+    retweets: Array<Retweet>;
   };
 }) => {
   const queryClient = useQueryClient();
@@ -84,11 +91,37 @@ const TweetComponent = ({
     },
   });
 
+  const retweetMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const isRetweeted = tweet.retweets.some(
+        (retweet) => retweet.userId === sessionData?.user?.id
+      );
+      if (sessionData?.user?.id === undefined) return;
+      if (!isRetweeted) return retweet(id, sessionData.user.id);
+      return;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(["tweets"]);
+      await queryClient.invalidateQueries(["retweets"]);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
   const handleLikeClick = async () => {
     if (sessionData?.user) {
       await likeTweetMutation.mutateAsync(tweet.id);
     } else {
       toast.error("Musisz być zalogowany, aby polubić post.");
+    }
+  };
+
+  const handleShareClick = async () => {
+    if (sessionData?.user) {
+      await retweetMutation.mutateAsync(tweet.id, sessionData.user.id);
+    } else {
+      toast.error("Musisz być zalogowany, aby udostępnić post.");
     }
   };
 
@@ -114,6 +147,10 @@ const TweetComponent = ({
                   <HeartIcon className="h-4 w-4 fill-black" />
                 )}
                 <span>{tweet.likes?.length}</span>
+              </Button>
+              <Button size="icon" variant="ghost" onClick={handleShareClick}>
+                <Repeat2 className={"h-4 w-4"} />
+                <span>{tweet.retweets?.length}</span>
               </Button>
               {sessionData?.user?.id === tweet.authorId && (
                 <>
