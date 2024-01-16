@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { Comment, User } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
 
@@ -12,20 +14,18 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" });
 
   try {
-    const tweets = await prisma.tweet.findMany({
+    const comments = await prisma.comment.findMany({
+      where: { tweetId: req.query.tweetId as string },
       include: {
         author: true,
-        hashtags: true,
-        media: true,
-        likes: true,
-        retweets: true,
       },
       orderBy: { createdAt: "desc" },
     });
-    res.status(200).json(tweets);
+    const firstXComments = comments.slice(0, Number(req.query.count));
+    res.status(200).json({ data: firstXComments, total: comments.length });
   } catch (error) {
     res
       .status(500)
-      .json({ error: "An error occurred while fetching restaurants." });
+      .json({ error: "An error occurred while fetching comment." });
   }
 }

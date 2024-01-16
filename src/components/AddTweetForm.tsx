@@ -19,6 +19,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Input } from "../../@/components/ui/input";
 import { useUploadThing } from "~/utils/uploadthing";
+import { toast } from "sonner";
 
 const uploadThings = async (
   files: File[] | null,
@@ -98,9 +99,11 @@ export const AddTweetForm = ({
   const { mutateAsync: addTweet } = useMutation({
     mutationFn: async (tweet: Tweet) => createTweet(tweet),
     onSuccess: async () => {
+      toast.success("Post został dodany.");
       await queryClient.invalidateQueries(["tweets"]);
     },
     onError: (error) => {
+      toast.error("Wystąpił błąd podczas dodawania posta.");
       console.log(error);
     },
   });
@@ -108,9 +111,11 @@ export const AddTweetForm = ({
   const { mutateAsync: updateTweet } = useMutation({
     mutationFn: async (updatedTweet: Tweet) => modifyTweet(updatedTweet),
     onSuccess: async () => {
+      toast.success("Post został edytowany.");
       await queryClient.invalidateQueries(["tweets"]);
     },
     onError: (error) => {
+      toast.error("Wystąpił błąd podczas edytowania posta.");
       console.log(error);
     },
   });

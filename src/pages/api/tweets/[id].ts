@@ -19,6 +19,7 @@ export default async function handler(
       include: {
         hashtags: true,
         media: true,
+        likes: true,
       },
     });
     res.status(200).json(tweet);
